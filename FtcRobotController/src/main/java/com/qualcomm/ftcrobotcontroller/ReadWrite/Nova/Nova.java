@@ -251,7 +251,7 @@ public class Nova //extends LinearOpMode
             telemetry.addData("Servo Runtime", System.nanoTime() - start);
         }
     }
-    
+
     /**public void writeToMotors(boolean abort) throws IOException, InterruptedException
     {
         long cycleNumber = 0;
