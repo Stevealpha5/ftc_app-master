@@ -57,35 +57,9 @@ public class FtcOpModeRegister implements OpModeRegister
      * If two or more op modes are registered with the same name, the app will display an error.
      */
 
-   // manager.register ("Driver Controlled", DriverControl.class);
+    manager.register("Nova Duo", NovaDuo.class);
 
-    //manager.register("NOVA Record", ConcurrentRecord.class);
-    //manager.register("NOVA Replay", ConcurrentReplay.class);
 
-   // manager.register("test", Test.class);
-    manager.register("Nova Record", NovaRecordTestBed.class);
-    manager.register("Nova Replay", NovaReplayTestBed.class);
-    manager.register("Nova Duo", NovaDuoExpirmenetal.class);
-
-    /*
-    manager.register("????", WhatTheHell.class);
-
-    manager.register("Red  1 Replay", SimulacrumReplayRed1.class);
-    manager.register("Red  2 Replay", SimulacrumReplayRed2.class);
-    manager.register("Blue 1 Replay", SimulacrumBlueReplay1.class);
-    manager.register("Blue 2 Replay", SimulacrumBlueReplay2.class);
-
-    manager.register("Wildcard Replay", SimulacrumWildcardReplay.class);
-    manager.register("Wildcard Record", SimulacrumWildcardRecord.class);
-
-    manager.register("Red  1 Record", SimulacrumRecordRed1.class);
-    manager.register("Red  2 Record", SimulacrumRecordRed2.class);
-    manager.register("Blue 1 Record", SimulacrumBlueRecord1.class);
-    manager.register("Blue 2 Record", SimulacrumBlueRecord2.class);
-
-    manager.register("Test Record", SimulacrumRecord.class);
-    manager.register("Test Replay", SimulacrumReplay.class);
-  */
 
   }
 }

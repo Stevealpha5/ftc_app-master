@@ -1,4 +1,4 @@
-package com.qualcomm.ftcrobotcontroller.opmodes;
+package com.qualcomm.ftcrobotcontroller.DiverControlled;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.util.Range;
 /**
  * Allows for manual (driver) control of the robot.
  */
-public class DriverControl extends OpMode
+public class DriverControl_2015_2016_Res_Q extends OpMode
 {
 
     double left;

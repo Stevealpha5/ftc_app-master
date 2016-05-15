@@ -137,7 +137,7 @@ public class SimulacrumRecord extends OpMode
     }
 
     /**
-     * Performs the same function as DriverControl, but additionally records all control inputs to a log-file,
+     * Performs the same function as DriverControl_2015_2016_Res_Q, but additionally records all control inputs to a log-file,
      * to be read later by the SimulacrumReplay method.
      * @see com.qualcomm.robotcore.eventloop.opmode.OpMode
      */

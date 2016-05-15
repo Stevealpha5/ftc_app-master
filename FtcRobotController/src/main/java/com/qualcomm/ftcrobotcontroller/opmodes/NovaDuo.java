@@ -1,10 +1,9 @@
 package com.qualcomm.ftcrobotcontroller.opmodes;
 
-import com.qualcomm.ftcrobotcontroller.ReadWrite.Nova.MotorGhost;
 import com.qualcomm.ftcrobotcontroller.ReadWrite.Nova.Nova;
-import com.qualcomm.ftcrobotcontroller.ReadWrite.Nova.ServoGhost;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotorController;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import java.io.IOException;
 
@@ -12,17 +11,17 @@ public class NovaDuo extends LinearOpMode
 {
     boolean isWrite;
 
-    MotorGhost motor_1;
-    MotorGhost motor_2;
-    MotorGhost motor_3;
-    MotorGhost motor_4;
+    DcMotor motor_1;
+    DcMotor motor_2;
+    DcMotor motor_3;
+    DcMotor motor_4;
 
-    ServoGhost servo_1;
-    ServoGhost servo_2;
+    Servo servo_1;
+    Servo servo_2;
 
     public String fileName = "novaDriverLog.txt";
 
-    Nova nova = new Nova(fileName, 4, 2, telemetry);
+    Nova nova = new Nova(fileName, telemetry);
 
 
     @Override
@@ -54,34 +53,21 @@ public class NovaDuo extends LinearOpMode
 
         telemetry.addData("Program Status", "Global Initialization Starting");
 
-        motor_1 = new MotorGhost("M1", 1);
-        motor_2 = new MotorGhost("M2", 2);
-        motor_3 = new MotorGhost("M3", 3);
-        motor_4 = new MotorGhost("M4", 4);
+        motor_1 = hardwareMap.dcMotor.get("motor_1");
+        motor_2 = hardwareMap.dcMotor.get("motor_2");
+        motor_3 = hardwareMap.dcMotor.get("motor_3");
+        motor_4 = hardwareMap.dcMotor.get("motor_4");
 
-        servo_1 = new ServoGhost("S1", 1);
-        servo_2 = new ServoGhost("S2", 2);
+        servo_1 = hardwareMap.servo.get("servo_1");
+        servo_2 = hardwareMap.servo.get("servo_2");
 
-        nova.addMotorGhost(motor_1);
-        nova.addMotorGhost(motor_2);
-        nova.addMotorGhost(motor_3);
-        nova.addMotorGhost(motor_4);
+        nova.addMotor(motor_1);
+        nova.addMotor(motor_2);
+        nova.addMotor(motor_3);
+        nova.addMotor(motor_4);
 
-        nova.addServoGhost(servo_1);
-        nova.addServoGhost(servo_2);
-
-        nova.mapGhosts(hardwareMap);
-
-        motor_1.motor.setMode(DcMotorController.RunMode.RESET_ENCODERS);
-        motor_2.motor.setMode(DcMotorController.RunMode.RESET_ENCODERS);
-        motor_3.motor.setMode(DcMotorController.RunMode.RESET_ENCODERS);
-        motor_4.motor.setMode(DcMotorController.RunMode.RESET_ENCODERS);
-
-        motor_1.motor.setMode(DcMotorController.RunMode.RUN_WITHOUT_ENCODERS);
-        motor_2.motor.setMode(DcMotorController.RunMode.RUN_WITHOUT_ENCODERS);
-        motor_3.motor.setMode(DcMotorController.RunMode.RUN_WITHOUT_ENCODERS);
-        motor_4.motor.setMode(DcMotorController.RunMode.RUN_WITHOUT_ENCODERS);
-
+        nova.addServo(servo_1);
+        nova.addServo(servo_2);
 
         telemetry.addData("Program Status", "Global Initialization Complete");
 
@@ -90,7 +76,6 @@ public class NovaDuo extends LinearOpMode
             waitForStart();
         }catch(InterruptedException e)
         {
-            telemetry.addData("Program Status", "Died at waitForStart()");
             e.printStackTrace();
         }
 
@@ -109,23 +94,50 @@ public class NovaDuo extends LinearOpMode
 
             telemetry.addData("Program Status", "Record Initialization Complete");
 
-            while(true)
+            int counter = 0;
+            while(counter < 10)
             {
                 telemetry.addData("Program Status", "Record Running");
 
-                nova.powerGhost(motor_1, gamepad1.right_stick_y);
-                nova.powerGhost(motor_2, gamepad1.left_stick_y);
+                motor_1.setPower(0.9999999999);
+                motor_2.setPower(0);
 
-                nova.powerGhost(motor_3, gamepad1.a, gamepad1.b, gamepad1.left_trigger);
-                nova.powerGhost(motor_4, gamepad1.a, gamepad1.b, gamepad1.right_trigger);
+                if(gamepad1.a)
+                {
+                    motor_3.setPower(gamepad1.left_trigger);
+                    motor_4.setPower(gamepad1.right_trigger);
+                }else if(gamepad1.b)
+                {
+                    motor_3.setPower(-gamepad1.left_trigger);
+                    motor_4.setPower(-gamepad1.right_trigger);
+                }else
+                {
+                    motor_3.setPower(0.0);
+                    motor_4.setPower(0.0);
+                }
 
-                nova.powerGhost(servo_1, gamepad1.right_stick_button, 0.0, 1.0);
-                nova.powerGhost(servo_2, gamepad1.left_stick_button, 0.0, 1.0);
+                if(gamepad1.right_stick_button)
+                {
+                    servo_1.setPosition(1.0);
+                }else
+                {
+                    servo_1.setPosition(0.0);
+                }
 
-                telemetry.addData("motor_1", motor_1.motor.getCurrentPosition());
-                telemetry.addData("motor_2", motor_2.motor.getCurrentPosition());
-                telemetry.addData("motor_3", motor_3.motor.getCurrentPosition());
-                telemetry.addData("motor_4", motor_4.motor.getCurrentPosition());
+                if(gamepad1.left_stick_button)
+                {
+                    servo_2.setPosition(1.0);
+                }else
+                {
+                    servo_2.setPosition(0.0);
+                }
+
+                telemetry.addData("motor_1", motor_1.getCurrentPosition());
+                telemetry.addData("motor_2", motor_2.getCurrentPosition());
+                telemetry.addData("motor_3", motor_3.getCurrentPosition());
+                telemetry.addData("motor_4", motor_4.getCurrentPosition());
+
+                long start = System.nanoTime();
 
                 try
                 {
@@ -135,15 +147,21 @@ public class NovaDuo extends LinearOpMode
                     e.printStackTrace();
                 }
 
+                long finish = System.nanoTime() - start;
+
+                telemetry.addData("runtime", finish);
+
+                counter++;
                 //telemetry.addData("Program Status", "Record Finished");
 
                 if(gamepad1.guide) //Breaks the infinite loop as to avoid crashes on program shutdown
                 {
-                    telemetry.addData("motor_1", motor_1.motor.getCurrentPosition());
-                    telemetry.addData("motor_2", motor_2.motor.getCurrentPosition());
-                    telemetry.addData("motor_3", motor_3.motor.getCurrentPosition());
-                    telemetry.addData("motor_4", motor_4.motor.getCurrentPosition());
+                    telemetry.addData("motor_1", motor_1.getCurrentPosition());
+                    telemetry.addData("motor_2", motor_2.getCurrentPosition());
+                    telemetry.addData("motor_3", motor_3.getCurrentPosition());
+                    telemetry.addData("motor_4", motor_4.getCurrentPosition());
 
+                    nova.logWriterStop();
                     telemetry.addData("Program Status", "Record Exiting");
                     break;
                 }
@@ -157,7 +175,7 @@ public class NovaDuo extends LinearOpMode
             telemetry.addData("Program Status", "Replay Running");
 
             try {
-                nova.writeToMotors(gamepad1.guide);
+                nova.writeToMotors();
             } catch (IOException e) {
                 e.printStackTrace();
                 telemetry.addData("Fatal Error", "IOException @ Read");
@@ -169,10 +187,10 @@ public class NovaDuo extends LinearOpMode
 
             telemetry.addData("Program Status", "Replay Finished, Press Guide To Exit");
 
-            telemetry.addData("motor_1", motor_1.motor.getCurrentPosition());
-            telemetry.addData("motor_2", motor_2.motor.getCurrentPosition());
-            telemetry.addData("motor_3", motor_3.motor.getCurrentPosition());
-            telemetry.addData("motor_4", motor_4.motor.getCurrentPosition());
+            telemetry.addData("motor_1", motor_1.getCurrentPosition());
+            telemetry.addData("motor_2", motor_2.getCurrentPosition());
+            telemetry.addData("motor_3", motor_3.getCurrentPosition());
+            telemetry.addData("motor_4", motor_4.getCurrentPosition());
 
             telemetry.addData("Program Status", "Replay Exiting");
 
