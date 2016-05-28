@@ -57,7 +57,8 @@ public class FtcOpModeRegister implements OpModeRegister
      * If two or more op modes are registered with the same name, the app will display an error.
      */
 
-    manager.register("Nova Duo", NovaDuo.class);
+    manager.register("Duo", LavoisierDuo.class);
+    manager.register("TEst", Test.class);
 
 
 

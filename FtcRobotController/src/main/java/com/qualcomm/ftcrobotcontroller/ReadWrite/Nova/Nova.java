@@ -16,7 +16,6 @@ import java.util.ArrayList;
 
 public class Nova
 {
-
     ArrayList<DcMotor> motorArrayList = new ArrayList<DcMotor>();
     ArrayList<Servo> servoArrayList = new ArrayList<Servo>();
 
@@ -29,27 +28,12 @@ public class Nova
     File sourceFile;
     Telemetry telemetry;
 
-    public Nova(String filename, Telemetry telemetry)
+    public Nova(String filename,Telemetry telemetry)
     {
+
         this.filename = filename;
-        this.sourceFile = new File(filePath, this.filename);
+        this.sourceFile = new File(filePath, this.filename); //Stores logfile directory and name
         this.telemetry = telemetry;
-    }
-
-    public void writeInit() throws IOException
-    {
-        File path = new File(filePath);
-        File logFile = new File(path, filename);
-
-
-        if (logFile.exists()) {
-            logFile.delete();
-        }
-
-        logFile.createNewFile();
-
-        logOutputWriter = new FileWriter(logFile);
-
     }
 
     public void addMotor(DcMotor motor)
@@ -62,9 +46,26 @@ public class Nova
         servoArrayList.add(servo);
     }
 
-    public void writeLogFile() throws IOException
-    {
 
+    public void writeInit() throws IOException //Create log file and initialize writer
+    {
+        File path = new File(filePath); //Create a File object containing the external file path
+        File logFile = new File(path, filename); //Create the virtual representation of the log file
+
+        //Delete old file, if it exists
+        if (logFile.exists())
+        {
+            logFile.delete();
+        }
+
+        logFile.createNewFile(); //Write new, empty log file
+
+        logOutputWriter = new FileWriter(logFile); //Initialize the file writer object4
+
+    }
+
+    public void writeLogFile() throws IOException//Write data to the file with the specified tag and input value
+    {
 
         for(DcMotor motor : motorArrayList)
         {
@@ -83,7 +84,6 @@ public class Nova
             {
                 finish = System.nanoTime();
             }
-
             telemetry.addData("Motor Runtime", System.nanoTime() - start);
         }
 
@@ -92,32 +92,20 @@ public class Nova
             double start = System.nanoTime();
             telemetry.addData("Servo NanoTime", start);
 
-            String writeData = Double.toString(servo.getPosition()) + '\n';
+            String writeData = Double.toString(servo.getPosition()) + '\n'; //Add a space between the tag and value, and add a line end marker
 
             logOutputWriter.write(writeData);
 
-            logOutputWriter.flush();
-
             double finish = System.nanoTime();
+
+            logOutputWriter.flush();
 
             while(finish - start < servoDelay)
             {
                 finish = System.nanoTime();
             }
+
             telemetry.addData("Servo Runtime", System.nanoTime() - start);
-        }
-
-
-    }
-
-    public void logWriterStop()
-    {
-        try
-        {
-            logOutputWriter.close();
-        }catch(IOException e)
-        {
-            e.printStackTrace();
         }
     }
 
@@ -127,7 +115,7 @@ public class Nova
 
         boolean breakState = false;
         String line;
-        BufferedReader br = new BufferedReader(new FileReader(sourceFile));
+        BufferedReader br = new BufferedReader(new FileReader(sourceFile)); //Create reader object
 
         while (true)
         {
@@ -138,7 +126,6 @@ public class Nova
                 double start = System.nanoTime();
 
                 line = br.readLine();
-
 
                 if(line == null)
                 {
@@ -163,7 +150,6 @@ public class Nova
 
             for(Servo servo : servoArrayList)
             {
-
                 double start = System.nanoTime();
                 line = br.readLine();
 

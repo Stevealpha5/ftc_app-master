@@ -1,36 +1,25 @@
 package com.qualcomm.ftcrobotcontroller.opmodes;
 
-import com.qualcomm.ftcrobotcontroller.Utilities.Synchronizer;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorController;
 
-public class Test extends OpMode
+public class Test extends LinearOpMode
 {
     DcMotor motor_1;
     DcMotor motor_2;
 
 
     @Override
-    public void init()
+    public void runOpMode() throws InterruptedException
     {
-        motor_1 = hardwareMap.dcMotor.get("motor_4");
+        motor_1 = hardwareMap.dcMotor.get("motor_1");
         motor_2 = hardwareMap.dcMotor.get("motor_3");
-    }
 
-    @Override
-    public void loop()
-    {
+        motor_1.setPower(1.0);
 
-        //motor_1.setPower(.05);
+        sleep(17*249);
 
-        motor_2.setMode(DcMotorController.RunMode.RUN_TO_POSITION);
-        motor_2.setTargetPosition(200);
-        motor_2.setPower(.025);
-
-        motor_1.setMode(DcMotorController.RunMode.RUN_TO_POSITION);
-        motor_1.setTargetPosition(200);
-        motor_1.setPower(.05);
+        motor_1.setPower(0.0);
 
         telemetry.addData("motor_1", motor_1.getCurrentPosition());
         telemetry.addData("motor_2", motor_2.getCurrentPosition());

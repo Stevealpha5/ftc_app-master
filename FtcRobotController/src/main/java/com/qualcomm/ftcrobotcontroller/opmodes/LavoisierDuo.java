@@ -1,5 +1,6 @@
 package com.qualcomm.ftcrobotcontroller.opmodes;
 
+import com.qualcomm.ftcrobotcontroller.ReadWrite.Lavoisier.Lavoisier;
 import com.qualcomm.ftcrobotcontroller.ReadWrite.Nova.Nova;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -7,7 +8,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import java.io.IOException;
 
-public class NovaDuo extends LinearOpMode
+public class LavoisierDuo extends LinearOpMode
 {
     boolean isWrite;
 
@@ -21,11 +22,11 @@ public class NovaDuo extends LinearOpMode
 
     public String fileName = "novaDriverLog.txt";
 
-    Nova nova = new Nova(fileName, telemetry);
+    Lavoisier lavoisier = new Lavoisier(fileName, telemetry);
 
 
     @Override
-    public void runOpMode()
+    public void runOpMode() throws InterruptedException
     {
         while(true)
         {
@@ -61,13 +62,13 @@ public class NovaDuo extends LinearOpMode
         servo_1 = hardwareMap.servo.get("servo_1");
         servo_2 = hardwareMap.servo.get("servo_2");
 
-        nova.addMotor(motor_1);
-        nova.addMotor(motor_2);
-        nova.addMotor(motor_3);
-        nova.addMotor(motor_4);
+        lavoisier.addMotor(motor_1);
+        lavoisier.addMotor(motor_2);
+        lavoisier.addMotor(motor_3);
+        lavoisier.addMotor(motor_4);
 
-        nova.addServo(servo_1);
-        nova.addServo(servo_2);
+        lavoisier.addServo(servo_1);
+        lavoisier.addServo(servo_2);
 
         telemetry.addData("Program Status", "Global Initialization Complete");
 
@@ -83,25 +84,19 @@ public class NovaDuo extends LinearOpMode
         if(isWrite)
         {
             telemetry.addData("Program Status", "Record Initialization Starting");
-
-            try
-            {
-                nova.writeInit();
-            }catch(IOException e)
-            {
-                e.printStackTrace();
-            }
-
+            lavoisier.start();
             telemetry.addData("Program Status", "Record Initialization Complete");
 
             int counter = 0;
-            while(counter < 10)
+
+            while(counter < 250)
             {
                 resetStartTime();
 
                 telemetry.addData("Program Status", "Record Running");
+                telemetry.addData("Counter", counter);
 
-                motor_1.setPower(0.9999999999);
+                motor_1.setPower(0.9);
                 motor_2.setPower(0);
 
                 if(gamepad1.a)
@@ -143,19 +138,13 @@ public class NovaDuo extends LinearOpMode
 
                 long start = System.nanoTime();
 
-                try
-                {
-                    nova.writeLogFile();
-                }catch(IOException e)
-                {
-                    e.printStackTrace();
-                }
 
                 long finish = System.nanoTime() - start;
 
                 telemetry.addData("runtime", finish);
 
                 counter++;
+                Thread.sleep(10);
                 //telemetry.addData("Program Status", "Record Finished");
 
                 if(gamepad1.guide) //Breaks the infinite loop as to avoid crashes on program shutdown
@@ -173,6 +162,8 @@ public class NovaDuo extends LinearOpMode
             }
 
             motor_1.setPower(0);
+
+
             telemetry.addData("Runtime", getRuntime());
 
             telemetry.addData("motor_1", motor_1.getCurrentPosition());
@@ -192,7 +183,7 @@ public class NovaDuo extends LinearOpMode
             telemetry.addData("Program Status", "Replay Running");
 
             try {
-                nova.writeToMotors();
+                lavoisier.writeToMotors();
             } catch (IOException e) {
                 e.printStackTrace();
                 telemetry.addData("Fatal Error", "IOException @ Read");
@@ -204,7 +195,6 @@ public class NovaDuo extends LinearOpMode
 
             telemetry.addData("Runtime", getRuntime());
             telemetry.addData("Program Status", "Replay Finished, Press Guide To Exit");
-            motor_1.setPower(0);
             telemetry.addData("motor_1", motor_1.getCurrentPosition());
             telemetry.addData("motor_2", motor_2.getCurrentPosition());
             telemetry.addData("motor_3", motor_3.getCurrentPosition());

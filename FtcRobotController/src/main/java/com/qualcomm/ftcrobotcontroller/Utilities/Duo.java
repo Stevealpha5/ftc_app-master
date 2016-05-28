@@ -10,7 +10,7 @@ public class Duo extends LinearOpMode
     public void runOpMode() throws InterruptedException
     {
         /**
-         * waits for user to input a selection for an OPMode
+         * Waits for user to input a selection for an OPMode
          *
          * If more than two OPModes are needed change the boolean isOne to an
          * int, use it for a selector...and rename it to something sensible if
